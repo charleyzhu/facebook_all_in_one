@@ -1,3 +1,11 @@
+/*
+ * @Author: Charley
+ * @Date: 2020-10-29 15:16:11
+ * @LastEditors: Charley
+ * @LastEditTime: 2020-10-30 11:55:17
+ * @FilePath: /example/lib/main.dart
+ * @Description: In User Settings Edit
+ */
 import 'package:flutter/material.dart';
 import 'dart:async';
 
@@ -32,6 +40,8 @@ class _MyAppState extends State<MyApp> {
       platformVersion = 'Failed to get platform version.';
     }
 
+    Map<String, String> map = await FacebookAllInOne.getFBLinks();
+
     // If the widget was removed from the tree while the asynchronous platform
     // message was in flight, we want to discard the reply rather than calling
     // setState to update our non-existent appearance.
@@ -49,8 +59,13 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: const Text('Plugin example app'),
         ),
-        body: Center(
-          child: Text('Running on: $_platformVersion\n'),
+        body: InkWell(
+          onTap: () {
+            initPlatformState();
+          },
+          child: Center(
+            child: Text('Running on: $_platformVersion\n'),
+          ),
         ),
       ),
     );

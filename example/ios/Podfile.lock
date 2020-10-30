@@ -1,0 +1,41 @@
+PODS:
+  - facebook_all_in_one (0.0.1):
+    - FBSDKCoreKit
+    - FBSDKLoginKit
+    - Flutter
+  - FBSDKCoreKit (8.0.0):
+    - FBSDKCoreKit/Basics (= 8.0.0)
+    - FBSDKCoreKit/Core (= 8.0.0)
+  - FBSDKCoreKit/Basics (8.0.0)
+  - FBSDKCoreKit/Core (8.0.0):
+    - FBSDKCoreKit/Basics
+  - FBSDKLoginKit (8.0.0):
+    - FBSDKLoginKit/Login (= 8.0.0)
+  - FBSDKLoginKit/Login (8.0.0):
+    - FBSDKCoreKit (~> 8.0.0)
+  - Flutter (1.0.0)
+
+DEPENDENCIES:
+  - facebook_all_in_one (from `.symlinks/plugins/facebook_all_in_one/ios`)
+  - Flutter (from `Flutter`)
+
+SPEC REPOS:
+  trunk:
+    - FBSDKCoreKit
+    - FBSDKLoginKit
+
+EXTERNAL SOURCES:
+  facebook_all_in_one:
+    :path: ".symlinks/plugins/facebook_all_in_one/ios"
+  Flutter:
+    :path: Flutter
+
+SPEC CHECKSUMS:
+  facebook_all_in_one: 61f1b6fcea82ca782d428829f4a9832645b02dc8
+  FBSDKCoreKit: 9d27fe97a2fa2abe5eeefea8240e837623ab88e0
+  FBSDKLoginKit: 2cbaf5405379731b22f2ebc224f7c30f62378171
+  Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
+
+PODFILE CHECKSUM: 34b3ceccccb45d853427800e45292439704a7877
+
+COCOAPODS: 1.9.3
