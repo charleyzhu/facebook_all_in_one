@@ -159,13 +159,13 @@
            NSMutableDictionary *resultData = [[NSMutableDictionary alloc]init];
             if (fbResult.isCancelled) {
                 resultData[@"status"] = @403;
-                [self finishWithResult:resultData];
             }else {
                 resultData[@"status"] = @200;
                 resultData[@"accessToken"] = [self getAccessToken:fbResult.token];
                 resultData[@"grantedPermissions"] = fbResult.grantedPermissions;
                 resultData[@"status"] = fbResult.declinedPermissions;
             }
+            [self finishWithResult:resultData];
         }
     }];
 }
