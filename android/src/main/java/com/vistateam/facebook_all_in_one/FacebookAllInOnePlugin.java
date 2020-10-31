@@ -5,6 +5,7 @@ import android.content.Context;
 
 import com.facebook.FacebookSdk;
 import com.facebook.applinks.AppLinkData;
+import com.facebook.login.LoginBehavior;
 
 import java.util.HashMap;
 import java.util.List;
@@ -44,6 +45,25 @@ public class FacebookAllInOnePlugin implements FlutterPlugin, MethodCallHandler,
     private FacebookAuth facebookAuth = new FacebookAuth();
     private ActivityPluginBinding activityPluginBinding;
 
+    private static final String ERROR_UNKNOWN_LOGIN_BEHAVIOR = "unknown_login_behavior";
+    private static final String LOGIN_BEHAVIOR_NATIVE_WITH_FALLBACK = "nativeWithFallback";
+    private static final String LOGIN_BEHAVIOR_NATIVE_ONLY = "nativeOnly";
+    private static final String LOGIN_BEHAVIOR_WEB_ONLY = "webOnly";
+    private static final String LOGIN_BEHAVIOR_WEB_VIEW_ONLY = "webViewOnly";
+
+    private static final String ARG_LOGIN_BEHAVIOR = "behavior";
+    private static final String ARG_PERMISSIONS = "permissions";
+    private static final String ARG_FIELDS = "fields";
+    private static final String ARG_DEEP_LINK = "deeplink";
+    private static final String ARG_PROMOTIONAL_CODE = "promotionalCode";
+
+    private static final String METHOD_DEEP_LINK= "getFBLinks";
+    private static final String METHOD_LOG_IN = "login";
+    private static final String METHOD_IS_LOGGED = "isLogged";
+    private static final String METHOD_GET_USER_DATA = "getUserData";
+    private static final String METHOD_LOG_OUT = "logOut";
+
+
 
     @Override
     public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
@@ -63,17 +83,19 @@ public class FacebookAllInOnePlugin implements FlutterPlugin, MethodCallHandler,
 
         if (call.method.equals("getPlatformVersion")) {
             result.success("Android " + android.os.Build.VERSION.RELEASE);
-        } else if (call.method.equals("getFBLinks")) {
+        } else if (call.method.equals(METHOD_DEEP_LINK)) {
             getFBLinks(call, result);
-        } else if (call.method.equals("login")) {
-            List<String> permissions = call.argument("permissions");
-            facebookAuth.login(this.activityPluginBinding.getActivity(), permissions, result);
-        } else if (call.method.equals("isLogged")) {
+        } else if (call.method.equals(METHOD_LOG_IN)) {
+            List<String> permissions = call.argument(ARG_PERMISSIONS);
+            String loginBehaviorStr = call.argument(ARG_LOGIN_BEHAVIOR);
+            LoginBehavior loginBehavior = loginBehaviorFromString(loginBehaviorStr, result);
+            facebookAuth.login(this.activityPluginBinding.getActivity(),loginBehavior, permissions, result);
+        } else if (call.method.equals(METHOD_IS_LOGGED)) {
             facebookAuth.isLogged(result);
-        } else if (call.method.equals("getUserData")) {
-            String fields = call.argument("fields");
+        } else if (call.method.equals(METHOD_GET_USER_DATA)) {
+            String fields = call.argument(ARG_FIELDS);
             facebookAuth.getUserData(fields, result);
-        } else if (call.method.equals("logOut")) {
+        } else if (call.method.equals(METHOD_LOG_OUT)) {
             facebookAuth.logOut(result);
         } else {
             result.notImplemented();
@@ -98,14 +120,14 @@ public class FacebookAllInOnePlugin implements FlutterPlugin, MethodCallHandler,
 
                             if (appLinkData.getTargetUri() != null) {
                                 //Log.d("FB_APP_LINKS", "Deferred Deeplink Received: " + appLinkData.getTargetUri().toString());
-                                data.put("deeplink", appLinkData.getTargetUri().toString());
+                                data.put(ARG_DEEP_LINK, appLinkData.getTargetUri().toString());
                             }
 
                             //Log.d("FB_APP_LINKS", "Deferred Deeplink Received: " + appLinkData.getPromotionCode());
                             if (appLinkData.getPromotionCode() != null)
-                                data.put("promotionalCode", appLinkData.getPromotionCode());
+                                data.put(ARG_PROMOTIONAL_CODE, appLinkData.getPromotionCode());
                             else
-                                data.put("promotionalCode", "");
+                                data.put(ARG_PROMOTIONAL_CODE, "");
 
                             Runnable myRunnable = new Runnable() {
                                 @Override
@@ -167,5 +189,26 @@ public class FacebookAllInOnePlugin implements FlutterPlugin, MethodCallHandler,
     @Override
     public void onDetachedFromActivity() {
         disposeActivity();
+    }
+
+    private LoginBehavior loginBehaviorFromString(String loginBehavior, Result result) {
+        switch (loginBehavior) {
+            case LOGIN_BEHAVIOR_NATIVE_WITH_FALLBACK:
+                return LoginBehavior.NATIVE_WITH_FALLBACK;
+            case LOGIN_BEHAVIOR_NATIVE_ONLY:
+                return LoginBehavior.NATIVE_ONLY;
+            case LOGIN_BEHAVIOR_WEB_ONLY:
+                return LoginBehavior.WEB_ONLY;
+            case LOGIN_BEHAVIOR_WEB_VIEW_ONLY:
+                return LoginBehavior.WEB_VIEW_ONLY;
+            default:
+                result.error(
+                        ERROR_UNKNOWN_LOGIN_BEHAVIOR,
+                        "setLoginBehavior called with unknown login behavior: "
+                                + loginBehavior,
+                        null
+                );
+                return null;
+        }
     }
 }

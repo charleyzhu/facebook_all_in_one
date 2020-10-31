@@ -13,6 +13,7 @@ import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.appevents.AppEventsLogger;
+import com.facebook.login.LoginBehavior;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 
@@ -43,10 +44,11 @@ public class FacebookAuth {
     }
 
 
-    public void login(Activity activity, List<String> permissions, MethodChannel.Result result) {
+    public void login(Activity activity, LoginBehavior loginBehavior, List<String> permissions, MethodChannel.Result result) {
         boolean isOK = resultDelegate.setPendingResult("login", result);
 
         if (isOK) {
+            loginManager.setLoginBehavior(loginBehavior);
             loginManager.logIn(activity, permissions);
         }
     }
