@@ -154,7 +154,9 @@
     UIViewController *viewController = [UIApplication sharedApplication].delegate.window.rootViewController;
     [self.loginManager logInWithPermissions:permissions fromViewController:viewController handler:^(FBSDKLoginManagerLoginResult * _Nullable fbResult, NSError * _Nullable error) {
         if (error != nil) {
-            NSMutableDictionary *resultData = [[NSMutableDictionary alloc]init];
+             [self finishWithError:@"error make sure that your  Info.plist is configured"];
+        }else {
+           NSMutableDictionary *resultData = [[NSMutableDictionary alloc]init];
             if (fbResult.isCancelled) {
                 resultData[@"status"] = @403;
                 [self finishWithResult:resultData];
@@ -164,8 +166,6 @@
                 resultData[@"grantedPermissions"] = fbResult.grantedPermissions;
                 resultData[@"status"] = fbResult.declinedPermissions;
             }
-        }else {
-            [self finishWithError:@"error make sure that your  Info.plist is configured"];
         }
     }];
 }
