@@ -247,7 +247,7 @@
     NSMutableDictionary *atDict = [[NSMutableDictionary alloc]init];
     atDict[@"token"] = accessToken.tokenString;
     atDict[@"userId"] = accessToken.userID;
-    atDict[@"expires"] = [[NSNumber alloc]initWithDouble:accessToken.expirationDate.timeIntervalSince1970 * 1000];
+    atDict[@"expires"] = [[NSNumber alloc]initWithInteger:(NSInteger)(accessToken.expirationDate.timeIntervalSince1970 * 1000)];
     atDict[@"grantedPermissions"] = [accessToken.permissions.allObjects mutableCopy];;
     atDict[@"declinedPermissions"] = [accessToken.declinedPermissions.allObjects mutableCopy];;
     return atDict;
