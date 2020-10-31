@@ -2,7 +2,7 @@
  * @Author: Charley
  * @Date: 2020-10-29 15:16:09
  * @LastEditors: Charley
- * @LastEditTime: 2020-10-31 15:27:09
+ * @LastEditTime: 2020-10-31 17:14:20
  * @FilePath: /likeread/Plugin/facebook_all_in_one/lib/facebook_all_in_one.dart
  * @Description: FacebookAllInOne dart code
  */
@@ -165,27 +165,27 @@ class FacebookAllInOne {
   static const paramNameContentId = "fb_content_id";
 
   /// Clears the current user data
-  Future<void> clearUserData() {
+  static Future<void> clearUserData() {
     return _channel.invokeMethod<void>('clearUserData');
   }
 
   /// Clears the currently set user id.
-  Future<void> clearUserID() {
+  static Future<void> clearUserID() {
     return _channel.invokeMethod<void>('clearUserID');
   }
 
   /// Explicitly flush any stored events to the server.
-  Future<void> flush() {
+  static Future<void> flush() {
     return _channel.invokeMethod<void>('flush');
   }
 
   /// Returns the app ID this logger was configured to log to.
-  Future<String> getApplicationId() {
+  static Future<String> getApplicationId() {
     return _channel.invokeMethod<String>('getApplicationId');
   }
 
   /// Log an app event with the specified [name] and the supplied [parameters] value.
-  Future<void> logEvent({
+  static Future<void> logEvent({
     @required String name,
     Map<String, dynamic> parameters,
     double valueToSum,
@@ -203,7 +203,7 @@ class FacebookAllInOne {
   /// All user data are hashed and used to match Facebook user from this
   /// instance of an application. The user data will be persisted between
   /// application instances.
-  Future<void> setUserData({
+  static Future<void> setUserData({
     String email,
     String firstName,
     String lastName,
@@ -232,7 +232,7 @@ class FacebookAllInOne {
   }
 
   /// Logs an app event that tracks that the application was open via Push Notification.
-  Future<void> logPushNotificationOpen({
+  static Future<void> logPushNotificationOpen({
     @required Map<String, dynamic> payload,
     String action,
   }) {
@@ -248,12 +248,12 @@ class FacebookAllInOne {
   /// This can be used to associate your own user id with the
   /// app events logged from this instance of an application.
   /// The user ID will be persisted between application instances.
-  Future<void> setUserID(String id) {
+  static Future<void> setUserID(String id) {
     return _channel.invokeMethod<void>('setUserID', id);
   }
 
   /// Update user properties as provided by a map of [parameters]
-  Future<void> updateUserProperties({
+  static Future<void> updateUserProperties({
     @required Map<String, dynamic> parameters,
     String applicationId,
   }) {
@@ -270,14 +270,14 @@ class FacebookAllInOne {
   /// Log this event when an app is being activated.
   ///
   /// See: https://developers.facebook.com/docs/reference/androidsdk/current/facebook/com/facebook/appevents/appeventsconstants.html/#eventnameactivatedapp
-  Future<void> logActivatedApp() {
+  static Future<void> logActivatedApp() {
     return logEvent(name: eventNameActivatedApp);
   }
 
   /// Log this event when an app is being deactivated.
   ///
   /// See: https://developers.facebook.com/docs/reference/androidsdk/current/facebook/com/facebook/appevents/appeventsconstants.html/#eventnamedeactivatedapp
-  Future<void> logDeactivatedApp() {
+  static Future<void> logDeactivatedApp() {
     return logEvent(name: eventNameDeactivatedApp);
   }
 
@@ -285,7 +285,7 @@ class FacebookAllInOne {
   /// Parameter [registrationMethod] is used to specify the method the user has
   /// used to register for the app, e.g. "Facebook", "email", "Google", etc.
   /// See: https://developers.facebook.com/docs/reference/androidsdk/current/facebook/com/facebook/appevents/appeventsconstants.html/#eventnamecompletedregistration
-  Future<void> logCompletedRegistration({String registrationMethod}) {
+  static Future<void> logCompletedRegistration({String registrationMethod}) {
     return logEvent(
       name: eventNameCompletedRegistration,
       parameters: {
@@ -297,7 +297,7 @@ class FacebookAllInOne {
   /// Log this event when the user has rated an item in the app.
   ///
   /// See: https://developers.facebook.com/docs/reference/androidsdk/current/facebook/com/facebook/appevents/appeventsconstants.html/#eventnamerated
-  Future<void> logRated({double valueToSum}) {
+  static Future<void> logRated({double valueToSum}) {
     return logEvent(
       name: eventNameRated,
       valueToSum: valueToSum,
@@ -307,7 +307,7 @@ class FacebookAllInOne {
   /// Log this event when the user has viewed a form of content in the app.
   ///
   /// See: https://developers.facebook.com/docs/reference/androidsdk/current/facebook/com/facebook/appevents/appeventsconstants.html/#eventnameviewedcontent
-  Future<void> logViewContent({
+  static Future<void> logViewContent({
     Map<String, dynamic> content,
     String id,
     String type,
@@ -324,7 +324,7 @@ class FacebookAllInOne {
 
   /// Creates a new map containing all of the key/value pairs from [parameters]
   /// except those whose value is `null`.
-  Map<String, dynamic> _filterOutNulls(Map<String, dynamic> parameters) {
+  static Map<String, dynamic> _filterOutNulls(Map<String, dynamic> parameters) {
     final Map<String, dynamic> filtered = <String, dynamic>{};
     parameters.forEach((String key, dynamic value) {
       if (value != null) {
@@ -338,7 +338,7 @@ class FacebookAllInOne {
   /// if disabled for GDPR-compliance.
   ///
   /// See: https://developers.facebook.com/docs/app-events/gdpr-compliance
-  Future<void> setAutoLogAppEventsEnabled(bool enabled) {
+  static Future<void> setAutoLogAppEventsEnabled(bool enabled) {
     return _channel.invokeMethod<void>('setAutoLogAppEventsEnabled', enabled);
   }
 
@@ -346,7 +346,7 @@ class FacebookAllInOne {
   /// This is needed for California Consumer Privacy Act (CCPA) compliance
   ///
   /// See: https://developers.facebook.com/docs/marketing-apis/data-processing-options
-  Future<void> setDataProcessingOptions(
+  static Future<void> setDataProcessingOptions(
     List<String> options, {
     int country,
     int state,
@@ -360,7 +360,7 @@ class FacebookAllInOne {
     return _channel.invokeMethod<void>('setDataProcessingOptions', args);
   }
 
-  Future<void> logPurchase({
+  static Future<void> logPurchase({
     @required double amount,
     @required String currency,
     Map<String, dynamic> parameters,
