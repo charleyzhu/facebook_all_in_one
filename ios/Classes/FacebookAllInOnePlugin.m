@@ -162,8 +162,8 @@
             }else {
                 resultData[@"status"] = @200;
                 resultData[@"accessToken"] = [self getAccessToken:fbResult.token];
-                resultData[@"grantedPermissions"] = fbResult.grantedPermissions;
-                resultData[@"status"] = fbResult.declinedPermissions;
+                resultData[@"grantedPermissions"] = [fbResult.grantedPermissions allObjects];
+                resultData[@"declinedPermissions"] = [fbResult.declinedPermissions allObjects];
             }
             [self finishWithResult:resultData];
         }
