@@ -71,40 +71,41 @@
 
 - (void)handleFacebookEventMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
     if ([@"clearUserData" isEqualToString:call.method]) {
-        
+        //clearUserData
+        [self fbEventClearUserDataWithMethodCall:call result:result];
     } else if ([@"clearUserID" isEqualToString:call.method]){
-        // logOut
-        [self logoutWithMethodCall:call result:result];
+        // clearUserID
+        [self fbEventClearUserIDWithMethodCall:call result:result];
     } else if ([@"flush" isEqualToString:call.method]){
-        // logOut
-        [self logoutWithMethodCall:call result:result];
+        // flush
+        [self fbEventFlushWithMethodCall:call result:result];
     } else if ([@"getApplicationId" isEqualToString:call.method]){
-        // logOut
-        [self logoutWithMethodCall:call result:result];
+        // getApplicationId
+        [self fbEventGetApplicationIdWithMethodCall:call result:result];
     } else if ([@"logEvent" isEqualToString:call.method]){
-        // logOut
-        [self logoutWithMethodCall:call result:result];
+        // logEvent
+        [self fbEventLogEventWithMethodCall:call result:result];
     } else if ([@"logPushNotificationOpen" isEqualToString:call.method]){
-        // logOut
-        [self logoutWithMethodCall:call result:result];
+        // logPushNotificationOpen
+        [self fbEventPushNotificationOpenWithMethodCall:call result:result];
     } else if ([@"setUserData" isEqualToString:call.method]){
-        // logOut
-        [self logoutWithMethodCall:call result:result];
+        // setUserData
+        [self fbEventSetUserDataWithMethodCall:call result:result];
     } else if ([@"setUserID" isEqualToString:call.method]){
-        // logOut
-        [self logoutWithMethodCall:call result:result];
+        // setUserID
+        [self fbEventSetUserIDWithMethodCall:call result:result];
     } else if ([@"updateUserProperties" isEqualToString:call.method]){
-        // logOut
-        [self logoutWithMethodCall:call result:result];
+        // updateUserProperties
+        [self fbEventUpdateUserPropertiesWithMethodCall:call result:result];
     } else if ([@"setAutoLogAppEventsEnabled" isEqualToString:call.method]){
-        // logOut
-        [self logoutWithMethodCall:call result:result];
+        // setAutoLogAppEventsEnabled
+        [self fbEventSetAutoLogAppEventsEnabledWithMethodCall:call result:result];
     } else if ([@"setDataProcessingOptions" isEqualToString:call.method]){
-        // logOut
-        [self logoutWithMethodCall:call result:result];
+        // setDataProcessingOptions
+        [self fbEventsetDataProcessingOptionsWithMethodCall:call result:result];
     } else if ([@"logPurchase" isEqualToString:call.method]){
-        // logOut
-        [self logoutWithMethodCall:call result:result];
+        // logPurchase
+        [self fbEventPurchasedWithMethodCall:call result:result];
     } else {
         result(FlutterMethodNotImplemented);
     }
