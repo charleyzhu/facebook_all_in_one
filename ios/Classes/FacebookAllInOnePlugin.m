@@ -64,6 +64,48 @@
         // logOut
         [self logoutWithMethodCall:call result:result];
     } else {
+        [self handleFacebookEventMethodCall:call result:result];
+        
+    }
+}
+
+- (void)handleFacebookEventMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
+    if ([@"clearUserData" isEqualToString:call.method]) {
+        
+    } else if ([@"clearUserID" isEqualToString:call.method]){
+        // logOut
+        [self logoutWithMethodCall:call result:result];
+    } else if ([@"flush" isEqualToString:call.method]){
+        // logOut
+        [self logoutWithMethodCall:call result:result];
+    } else if ([@"getApplicationId" isEqualToString:call.method]){
+        // logOut
+        [self logoutWithMethodCall:call result:result];
+    } else if ([@"logEvent" isEqualToString:call.method]){
+        // logOut
+        [self logoutWithMethodCall:call result:result];
+    } else if ([@"logPushNotificationOpen" isEqualToString:call.method]){
+        // logOut
+        [self logoutWithMethodCall:call result:result];
+    } else if ([@"setUserData" isEqualToString:call.method]){
+        // logOut
+        [self logoutWithMethodCall:call result:result];
+    } else if ([@"setUserID" isEqualToString:call.method]){
+        // logOut
+        [self logoutWithMethodCall:call result:result];
+    } else if ([@"updateUserProperties" isEqualToString:call.method]){
+        // logOut
+        [self logoutWithMethodCall:call result:result];
+    } else if ([@"setAutoLogAppEventsEnabled" isEqualToString:call.method]){
+        // logOut
+        [self logoutWithMethodCall:call result:result];
+    } else if ([@"setDataProcessingOptions" isEqualToString:call.method]){
+        // logOut
+        [self logoutWithMethodCall:call result:result];
+    } else if ([@"logPurchase" isEqualToString:call.method]){
+        // logOut
+        [self logoutWithMethodCall:call result:result];
+    } else {
         result(FlutterMethodNotImplemented);
     }
 }
@@ -209,4 +251,137 @@
     atDict[@"declinedPermissions"] = [accessToken.declinedPermissions.allObjects mutableCopy];;
     return atDict;
 }
+
+
+#pragma mark -  facebook event
+// ClearUserData
+-(void)fbEventClearUserDataWithMethodCall:(FlutterMethodCall*)call result:(FlutterResult)flutterResult {
+    [FBSDKAppEvents clearUserData];
+    flutterResult(nil);
+}
+
+// Clear UserID
+-(void)fbEventClearUserIDWithMethodCall:(FlutterMethodCall*)call result:(FlutterResult)flutterResult {
+    [FBSDKAppEvents clearUserID];
+    flutterResult(nil);
+}
+
+// Flush
+-(void)fbEventFlushWithMethodCall:(FlutterMethodCall*)call result:(FlutterResult)flutterResult {
+    [FBSDKAppEvents flush];
+    flutterResult(nil);
+}
+
+// GetApplicationId
+-(void)fbEventGetApplicationIdWithMethodCall:(FlutterMethodCall*)call result:(FlutterResult)flutterResult {
+    flutterResult(FBSDKSettings.appID);
+}
+
+// LogEvent
+-(void)fbEventLogEventWithMethodCall:(FlutterMethodCall*)call result:(FlutterResult)flutterResult {
+    NSString *eventName = call.arguments[@"name"];
+    NSDictionary *parameters = call.arguments[@"parameters"];
+    NSNumber *valueToSumNumber = call.arguments[@"_valueToSum"];
+    if (valueToSumNumber != nil) {
+        [FBSDKAppEvents logEvent:eventName valueToSum:valueToSumNumber.doubleValue parameters:parameters];
+    }else {
+        [FBSDKAppEvents logEvent:eventName parameters:parameters];
+    }
+    flutterResult(nil);
+}
+
+// PushNotificationOpen
+-(void)fbEventPushNotificationOpenWithMethodCall:(FlutterMethodCall*)call result:(FlutterResult)flutterResult {
+    NSDictionary *parameters = call.arguments[@"payload"];
+    NSString *action = call.arguments[@"action"];
+    if (action != nil){
+        [FBSDKAppEvents logPushNotificationOpen:parameters action:action];
+    }else {
+        [FBSDKAppEvents logPushNotificationOpen:parameters];
+    }
+    flutterResult(nil);
+}
+
+// SetUserData
+-(void)fbEventSetUserDataWithMethodCall:(FlutterMethodCall*)call result:(FlutterResult)flutterResult {
+    NSString *email = call.arguments[@"email"];
+    [FBSDKAppEvents setUserData:email forType:FBSDKAppEventEmail];
+    
+    NSString *firstName = call.arguments[@"firstName"];
+    [FBSDKAppEvents setUserData:firstName forType:FBSDKAppEventFirstName];
+    
+    NSString *lastName = call.arguments[@"lastName"];
+    [FBSDKAppEvents setUserData:lastName forType:FBSDKAppEventLastName];
+    
+    NSString *phone = call.arguments[@"phone"];
+    [FBSDKAppEvents setUserData:phone forType:FBSDKAppEventPhone];
+    
+    NSString *dateOfBirth = call.arguments[@"dateOfBirth"];
+    [FBSDKAppEvents setUserData:dateOfBirth forType:FBSDKAppEventDateOfBirth];
+    
+    NSString *gender = call.arguments[@"gender"];
+    [FBSDKAppEvents setUserData:gender forType:FBSDKAppEventGender];
+    
+    NSString *city = call.arguments[@"city"];
+    [FBSDKAppEvents setUserData:city forType:FBSDKAppEventCity];
+    
+    NSString *state = call.arguments[@"state"];
+    [FBSDKAppEvents setUserData:state forType:FBSDKAppEventState];
+    
+    NSString *zip = call.arguments[@"zip"];
+    [FBSDKAppEvents setUserData:zip forType:FBSDKAppEventZip];
+    
+    NSString *country = call.arguments[@"country"];
+    [FBSDKAppEvents setUserData:country forType:FBSDKAppEventCountry];
+    
+    flutterResult(nil);
+}
+
+// SetUserID
+-(void)fbEventSetUserIDWithMethodCall:(FlutterMethodCall*)call result:(FlutterResult)flutterResult {
+    FBSDKAppEvents.userID = call.arguments;
+    flutterResult(nil);
+}
+
+// UpdateUserProperties
+-(void)fbEventUpdateUserPropertiesWithMethodCall:(FlutterMethodCall*)call result:(FlutterResult)flutterResult {
+    NSDictionary *parameters = call.arguments[@"parameters"];
+    
+    [FBSDKAppEvents updateUserProperties:parameters handler:^(FBSDKGraphRequestConnection * _Nullable connection, id  _Nullable result, NSError * _Nullable error) {
+            if (error != nil) {
+                flutterResult(nil);
+            }else {
+                flutterResult(result);
+            }
+    }];
+    
+}
+
+// SetAutoLogAppEventsEnabled
+-(void)fbEventSetAutoLogAppEventsEnabledWithMethodCall:(FlutterMethodCall*)call result:(FlutterResult)flutterResult {
+    bool enabled = call.arguments;
+    [FBSDKSettings setAutoLogAppEventsEnabled:enabled];
+    flutterResult(nil);
+}
+
+// setDataProcessingOptions
+-(void)fbEventsetDataProcessingOptionsWithMethodCall:(FlutterMethodCall*)call result:(FlutterResult)flutterResult {
+    NSArray *modes = call.arguments[@"options"];
+    NSNumber *state = call.arguments[@"state"];
+    NSNumber *country = call.arguments[@"country"];
+    [FBSDKSettings setDataProcessingOptions:modes country:country.intValue state:state.intValue];
+    flutterResult(nil);
+}
+
+// Purchased
+-(void)fbEventPurchasedWithMethodCall:(FlutterMethodCall*)call result:(FlutterResult)flutterResult {
+    NSNumber *amount = call.arguments[@"amount"];
+    NSString *currency = call.arguments[@"currency"];
+    NSDictionary *parameters = call.arguments[@"parameters"];
+    
+    [FBSDKAppEvents logPurchase:amount.doubleValue currency:currency parameters:parameters];
+    
+    flutterResult(nil);
+}
+
 @end
