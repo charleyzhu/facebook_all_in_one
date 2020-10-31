@@ -306,34 +306,34 @@
 // SetUserData
 -(void)fbEventSetUserDataWithMethodCall:(FlutterMethodCall*)call result:(FlutterResult)flutterResult {
     NSString *email = call.arguments[@"email"];
-    [FBSDKAppEvents setUserData:email forType:FBSDKAppEventEmail];
+    if (email != nil)[FBSDKAppEvents setUserData:email forType:FBSDKAppEventEmail];
     
     NSString *firstName = call.arguments[@"firstName"];
-    [FBSDKAppEvents setUserData:firstName forType:FBSDKAppEventFirstName];
+    if (firstName != nil)[FBSDKAppEvents setUserData:firstName forType:FBSDKAppEventFirstName];
     
     NSString *lastName = call.arguments[@"lastName"];
-    [FBSDKAppEvents setUserData:lastName forType:FBSDKAppEventLastName];
+    if (lastName != nil)[FBSDKAppEvents setUserData:lastName forType:FBSDKAppEventLastName];
     
     NSString *phone = call.arguments[@"phone"];
-    [FBSDKAppEvents setUserData:phone forType:FBSDKAppEventPhone];
+    if (phone != nil)[FBSDKAppEvents setUserData:phone forType:FBSDKAppEventPhone];
     
     NSString *dateOfBirth = call.arguments[@"dateOfBirth"];
-    [FBSDKAppEvents setUserData:dateOfBirth forType:FBSDKAppEventDateOfBirth];
+    if (dateOfBirth != nil)[FBSDKAppEvents setUserData:dateOfBirth forType:FBSDKAppEventDateOfBirth];
     
     NSString *gender = call.arguments[@"gender"];
-    [FBSDKAppEvents setUserData:gender forType:FBSDKAppEventGender];
+    if (gender != nil)[FBSDKAppEvents setUserData:gender forType:FBSDKAppEventGender];
     
     NSString *city = call.arguments[@"city"];
-    [FBSDKAppEvents setUserData:city forType:FBSDKAppEventCity];
+    if (city != nil)[FBSDKAppEvents setUserData:city forType:FBSDKAppEventCity];
     
     NSString *state = call.arguments[@"state"];
-    [FBSDKAppEvents setUserData:state forType:FBSDKAppEventState];
+    if (state != nil)[FBSDKAppEvents setUserData:state forType:FBSDKAppEventState];
     
     NSString *zip = call.arguments[@"zip"];
-    [FBSDKAppEvents setUserData:zip forType:FBSDKAppEventZip];
+    if (zip != nil)[FBSDKAppEvents setUserData:zip forType:FBSDKAppEventZip];
     
     NSString *country = call.arguments[@"country"];
-    [FBSDKAppEvents setUserData:country forType:FBSDKAppEventCountry];
+    if (country != nil)[FBSDKAppEvents setUserData:country forType:FBSDKAppEventCountry];
     
     flutterResult(nil);
 }
