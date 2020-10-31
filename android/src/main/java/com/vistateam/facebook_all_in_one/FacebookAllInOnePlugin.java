@@ -28,7 +28,7 @@ import android.util.Log;
 /**
  * FacebookAllInOnePlugin
  */
-public class FacebookAllInOnePlugin implements FlutterPlugin, MethodCallHandler {
+public class FacebookAllInOnePlugin implements FlutterPlugin, MethodCallHandler,ActivityAware {
     /// The MethodChannel that will the communication between Flutter and native Android
     ///
     /// This local reference serves to register the plugin with the Flutter Engine and unregister it
@@ -41,7 +41,7 @@ public class FacebookAllInOnePlugin implements FlutterPlugin, MethodCallHandler 
     private Context mContext;
     private Activity mActivity;
 
-//    private FacebookAuth facebookAuth = new FacebookAuth();
+    private FacebookAuth facebookAuth = new FacebookAuth();
     private ActivityPluginBinding activityPluginBinding;
 
 
@@ -50,6 +50,7 @@ public class FacebookAllInOnePlugin implements FlutterPlugin, MethodCallHandler 
         channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), CHANNEL_NAME);
         channel.setMethodCallHandler(this);
         this.mContext = flutterPluginBinding.getApplicationContext();
+
     }
 
     @Override
@@ -64,7 +65,17 @@ public class FacebookAllInOnePlugin implements FlutterPlugin, MethodCallHandler 
             result.success("Android " + android.os.Build.VERSION.RELEASE);
         } else if (call.method.equals("getFBLinks")) {
             getFBLinks(call, result);
-        }  else {
+        } else if (call.method.equals("login")) {
+            List<String> permissions = call.argument("permissions");
+            facebookAuth.login(this.activityPluginBinding.getActivity(), permissions, result);
+        } else if (call.method.equals("isLogged")) {
+            facebookAuth.isLogged(result);
+        } else if (call.method.equals("getUserData")) {
+            String fields = call.argument("fields");
+            facebookAuth.getUserData(fields, result);
+        } else if (call.method.equals("logOut")) {
+            facebookAuth.logOut(result);
+        } else {
             result.notImplemented();
         }
     }
@@ -127,4 +138,34 @@ public class FacebookAllInOnePlugin implements FlutterPlugin, MethodCallHandler 
     }
 
 
+    private void attachToActivity(ActivityPluginBinding binding) {
+        this.activityPluginBinding = binding;
+        activityPluginBinding.addActivityResultListener(facebookAuth.resultDelegate);
+    }
+
+    private void disposeActivity() {
+        activityPluginBinding.removeActivityResultListener(facebookAuth.resultDelegate);
+        // delegate.setActivity(null);
+        activityPluginBinding = null;
+    }
+
+    @Override
+    public void onAttachedToActivity(@NonNull ActivityPluginBinding binding) {
+        this.attachToActivity(binding);
+    }
+
+    @Override
+    public void onDetachedFromActivityForConfigChanges() {
+        disposeActivity();
+    }
+
+    @Override
+    public void onReattachedToActivityForConfigChanges(@NonNull ActivityPluginBinding binding) {
+        this.attachToActivity(binding);
+    }
+
+    @Override
+    public void onDetachedFromActivity() {
+        disposeActivity();
+    }
 }

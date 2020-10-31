@@ -14,6 +14,7 @@
 {
     self = [super init];
     if (self) {
+        [FBSDKApplicationDelegate initializeSDK:nil];
         self.loginManager = [[FBSDKLoginManager alloc]init];
     }
     return self;
@@ -25,7 +26,7 @@
                                      binaryMessenger:[registrar messenger]];
     
     
-    [FBSDKApplicationDelegate initializeSDK:nil];
+    
     
     FacebookAllInOnePlugin* instance = [[FacebookAllInOnePlugin alloc] init];
     [registrar addMethodCallDelegate:instance channel:channel];
