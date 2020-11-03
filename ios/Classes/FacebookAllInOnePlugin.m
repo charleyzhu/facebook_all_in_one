@@ -34,14 +34,11 @@
 }
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    [[FBSDKApplicationDelegate sharedInstance] application:application didFinishLaunchingWithOptions:launchOptions];
-    return YES;
-    
+    return [[FBSDKApplicationDelegate sharedInstance] application:application didFinishLaunchingWithOptions:launchOptions];
 }
 
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url options:(nonnull NSDictionary<UIApplicationOpenURLOptionsKey, id> *)options {
-    [[FBSDKApplicationDelegate sharedInstance] application:application openURL:url options:options];
-    return YES;
+    return [[FBSDKApplicationDelegate sharedInstance] application:application openURL:url options:options];
 }
 
 
