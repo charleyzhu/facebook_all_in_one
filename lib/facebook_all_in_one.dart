@@ -2,8 +2,8 @@
  * @Author: Charley
  * @Date: 2020-10-29 15:16:09
  * @LastEditors: Charley
- * @LastEditTime: 2020-10-31 17:14:20
- * @FilePath: /likeread/Plugin/facebook_all_in_one/lib/facebook_all_in_one.dart
+ * @LastEditTime: 2020-11-23 17:36:37
+ * @FilePath: /facebook_all_in_one/lib/facebook_all_in_one.dart
  * @Description: FacebookAllInOne dart code
  */
 import 'dart:async';
@@ -61,6 +61,14 @@ class FacebookAllInOne {
   static Future<String> get platformVersion async {
     final String version = await _channel.invokeMethod('getPlatformVersion');
     return version;
+  }
+  //----------------------------------------------------------------
+  //get Launching Data
+  //----------------------------------------------------------------
+
+  static Future<String> getLaunchingLink() async {
+    final launchingLink = await _channel.invokeMethod("getLaunchingLink");
+    return Future.value(launchingLink);
   }
 
   // deep link

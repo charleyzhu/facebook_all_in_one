@@ -5,7 +5,7 @@
 @interface FacebookAllInOnePlugin()
 @property(nonatomic,copy)FlutterResult pendingResult;
 @property(nonatomic,strong)FBSDKLoginManager *loginManager;
-
+@property(nonatomic,copy)NSString *launchingLink;
 @end
 
 @implementation FacebookAllInOnePlugin
@@ -34,6 +34,10 @@
 }
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    NSURL *url = (NSURL *)launchOptions[UIApplicationLaunchOptionsURLKey];
+    if (url) {
+        self.launchingLink = [url absoluteString];
+    }
     return [[FBSDKApplicationDelegate sharedInstance] application:application didFinishLaunchingWithOptions:launchOptions];
 }
 
