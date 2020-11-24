@@ -49,7 +49,10 @@
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
     if ([@"getPlatformVersion" isEqualToString:call.method]) {
         result([@"iOS " stringByAppendingString:[[UIDevice currentDevice] systemVersion]]);
-    } else if ([@"getFBLinks" isEqualToString:call.method]){
+    }else if ([@"getLaunchingLink" isEqualToString:call.method]){
+        // get Launching Link
+        [self getLaunchingLinkWithMethodCall:call result:result];
+    }else if ([@"getFBLinks" isEqualToString:call.method]){
         // get deep links
         [self getFacebookLinskWithMethodCall:call result:result];
     }else if ([@"login" isEqualToString:call.method]){
@@ -110,6 +113,14 @@
     } else {
         result(FlutterMethodNotImplemented);
     }
+}
+
+
+/// getLaunchingLink
+/// @param call FlutterMethodCall
+/// @param result Result To Flutter CallBack
+- (void)getLaunchingLinkWithMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
+    result(self.launchingLink);
 }
 
 
