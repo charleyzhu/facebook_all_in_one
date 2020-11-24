@@ -89,7 +89,7 @@ public class FacebookAllInOnePlugin implements FlutterPlugin, MethodCallHandler,
             facebookAuth.getUserData(fields, result);
         } else if (call.method.equals("logOut")) {
             facebookAuth.logOut(result);
-        } else if (call.method.equals("getInitialLink")) {
+        } else if (call.method.equals("getLaunchingLink")) {
             result.success(initialLink);
         } else {
             result.notImplemented();

@@ -3,26 +3,20 @@ package com.vistateam.facebook_all_in_one;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
-import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
-import com.facebook.appevents.AppEventsLogger;
-import com.facebook.login.LoginBehavior;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 import io.flutter.plugin.common.MethodChannel;
@@ -44,11 +38,10 @@ public class FacebookAuth {
     }
 
 
-    public void login(Activity activity, LoginBehavior loginBehavior, List<String> permissions, MethodChannel.Result result) {
+    public void login(Activity activity, List<String> permissions, MethodChannel.Result result) {
         boolean isOK = resultDelegate.setPendingResult("login", result);
 
         if (isOK) {
-            loginManager.setLoginBehavior(loginBehavior);
             loginManager.logIn(activity, permissions);
         }
     }
