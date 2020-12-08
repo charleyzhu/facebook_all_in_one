@@ -2,7 +2,7 @@
  * @Author: Charley
  * @Date: 2020-10-29 15:16:09
  * @LastEditors: Charley
- * @LastEditTime: 2020-11-23 17:36:37
+ * @LastEditTime: 2020-12-08 16:10:53
  * @FilePath: /facebook_all_in_one/lib/facebook_all_in_one.dart
  * @Description: FacebookAllInOne dart code
  */
@@ -57,11 +57,30 @@ enum FacebookLoginBehavior {
 
 class FacebookAllInOne {
   static const MethodChannel _channel = const MethodChannel('VistaTeam/facebook_all_in_one');
+  static const EventChannel _eChannel = const EventChannel('VistaTeam/facebook_all_in_one_events');
+  Stream<String> _stream;
 
   static Future<String> get platformVersion async {
     final String version = await _channel.invokeMethod('getPlatformVersion');
     return version;
   }
+
+  Stream<String> getLinksStream() => _stream ??= _eChannel.receiveBroadcastStream().cast<String>();
+
+  Stream<Uri> getUriLinksStream() {
+    return getLinksStream().transform<Uri>(
+      StreamTransformer<String, Uri>.fromHandlers(
+        handleData: (String link, EventSink<Uri> sink) {
+          if (link == null) {
+            sink.add(null);
+          } else {
+            sink.add(Uri.parse(link));
+          }
+        },
+      ),
+    );
+  }
+
   //----------------------------------------------------------------
   //get Launching Data
   //----------------------------------------------------------------

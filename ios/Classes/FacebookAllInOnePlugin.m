@@ -2,13 +2,16 @@
 #import <FBSDKCoreKit/FBSDKCoreKit.h>
 #import <FBSDKLoginKit/FBSDKLoginKit.h>
 
-@interface FacebookAllInOnePlugin()
+@interface FacebookAllInOnePlugin()<FlutterStreamHandler>
 @property(nonatomic,copy)FlutterResult pendingResult;
 @property(nonatomic,strong)FBSDKLoginManager *loginManager;
 @property(nonatomic,copy)NSString *launchingLink;
+@property(nonatomic,copy)NSString *latestLink;
+@property(nonatomic,strong)FlutterEventSink eventSink;
 @end
 
 @implementation FacebookAllInOnePlugin
+
 
 - (instancetype)init
 {
@@ -25,12 +28,27 @@
                                      methodChannelWithName:@"VistaTeam/facebook_all_in_one"
                                      binaryMessenger:[registrar messenger]];
     
-    
+    FlutterEventChannel *chargingChannel =
+          [FlutterEventChannel eventChannelWithName:@"VistaTeam/facebook_all_in_one_events"
+                                    binaryMessenger:[registrar messenger]];
     
     
     FacebookAllInOnePlugin* instance = [[FacebookAllInOnePlugin alloc] init];
     [registrar addMethodCallDelegate:instance channel:channel];
+    [chargingChannel setStreamHandler:instance];
     [registrar addApplicationDelegate:instance];
+}
+
+- (void)setLatestLink:(NSString *)latestLink {
+    static NSString *key = @"latestLink";
+
+    [self willChangeValueForKey:key];
+    _latestLink = [latestLink copy];
+    [self didChangeValueForKey:key];
+
+    if (self.eventSink){
+        self.eventSink(self.latestLink);
+    }
 }
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
@@ -45,6 +63,7 @@
 
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url options:(nonnull NSDictionary<UIApplicationOpenURLOptionsKey, id> *)options {
     [[FBSDKApplicationDelegate sharedInstance] application:application openURL:url options:options];
+    self.latestLink = [url absoluteString];
     return YES;
 }
 
@@ -116,6 +135,17 @@
     } else {
         result(FlutterMethodNotImplemented);
     }
+}
+
+- (FlutterError* _Nullable)onListenWithArguments:(id _Nullable)arguments
+                                       eventSink:(FlutterEventSink)events {
+    self.eventSink = events;
+    return nil;
+}
+
+- (FlutterError* _Nullable)onCancelWithArguments:(id _Nullable)arguments {
+    self.eventSink = nil;
+    return nil;
 }
 
 
