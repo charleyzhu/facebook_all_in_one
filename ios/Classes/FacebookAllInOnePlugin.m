@@ -58,13 +58,13 @@
     }
     
     [[FBSDKApplicationDelegate sharedInstance] application:application didFinishLaunchingWithOptions:launchOptions];
-    return YES;
+    return NO;
 }
 
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url options:(nonnull NSDictionary<UIApplicationOpenURLOptionsKey, id> *)options {
     [[FBSDKApplicationDelegate sharedInstance] application:application openURL:url options:options];
     self.latestLink = [url absoluteString];
-    return YES;
+    return NO;
 }
 
 
