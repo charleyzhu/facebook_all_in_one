@@ -19,6 +19,8 @@ Pod::Spec.new do |s|
 
   s.dependency 'FBSDKCoreKit', '~> 8.2.0'
   s.dependency 'FBSDKLoginKit','~> 8.2.0'
+  s.dependency 'firebase_core'
+  s.dependency 'Firebase/DynamicLinks'
 
   s.platform = :ios, '9.0'
 
