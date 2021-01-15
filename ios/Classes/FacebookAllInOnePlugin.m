@@ -1,7 +1,6 @@
 #import "FacebookAllInOnePlugin.h"
 #import <FBSDKCoreKit/FBSDKCoreKit.h>
 #import <FBSDKLoginKit/FBSDKLoginKit.h>
-#import "Firebase/Firebase.h"
 
 @interface FacebookAllInOnePlugin()<FlutterStreamHandler>
 @property(nonatomic,copy)FlutterResult pendingResult;
@@ -52,47 +51,12 @@
     }
 }
 
-- (BOOL)checkForDynamicLink:(NSURL *)url {
-  FIRDynamicLink *dynamicLink = [[FIRDynamicLinks dynamicLinks] dynamicLinkFromCustomSchemeURL:url];
-  if (dynamicLink) {
-    [self onDeepLinkResult:dynamicLink error:nil];
-    return YES;
-  }
-  return NO;
-}
-
-- (void)onDeepLinkResult:(FIRDynamicLink *_Nullable)dynamicLink error:(NSError *_Nullable)error {
-    if (dynamicLink.url != nil) {
-        self.launchingLink = [dynamicLink.url absoluteString];
-    }
-    // if (error) {
-    //     self.launchingLink = 
-    // }
-//   if (_initiated) {
-//     if (error) {
-//       FlutterError *flutterError = getFlutterError(error);
-//       [_channel invokeMethod:@"onLinkError" arguments:getDictionaryFromFlutterError(flutterError)];
-//     } else {
-//       NSMutableDictionary *dictionary = getDictionaryFromDynamicLink(dynamicLink);
-//       [_channel invokeMethod:@"onLinkSuccess" arguments:dictionary];
-//     }
-//   } else {
-//     if (error) {
-//       _flutterError = getFlutterError(error);
-//     } else if (dynamicLink.url != nil || _initialLink == nil) {
-//       // We'd like to overwrite initial link only if it's
-//       // the first time or if we overwrite it with url that is not nil
-//       _initialLink = dynamicLink;
-//     }
-//   }
-}
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     NSURL *url = (NSURL *)launchOptions[UIApplicationLaunchOptionsURLKey];
     if (url) {
         self.launchingLink = [url absoluteString];
     }
-    
     [[FBSDKApplicationDelegate sharedInstance] application:application didFinishLaunchingWithOptions:launchOptions];
     return NO;
 }
@@ -100,17 +64,7 @@
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url options:(nonnull NSDictionary<UIApplicationOpenURLOptionsKey, id> *)options {
     [[FBSDKApplicationDelegate sharedInstance] application:application openURL:url options:options];
     self.latestLink = [url absoluteString];
-    [self checkForDynamicLink:url];
-    return NO;
-}
-
-- (BOOL)application:(UIApplication *)application
-              openURL:(NSURL *)url
-    sourceApplication:(NSString *)sourceApplication
-           annotation:(id)annotation {
-  [[FBSDKApplicationDelegate sharedInstance] application:application openURL:url options:options];
-    self.latestLink = [url absoluteString];
-    [self checkForDynamicLink:url];
+    
     return NO;
 }
 
