@@ -18,6 +18,10 @@
     self = [super init];
     if (self) {
         [FBSDKApplicationDelegate initializeSDK:nil];
+        if (@available(iOS 14.0, *)) {
+            [FBSDKSettings setAdvertiserTrackingEnabled:YES];
+        } 
+        
         self.loginManager = [[FBSDKLoginManager alloc]init];
     }
     return self;
