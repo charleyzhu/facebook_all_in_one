@@ -4,11 +4,15 @@ import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 
 import com.facebook.FacebookSdk;
+import com.facebook.appevents.AppEventsLogger;
 import com.facebook.applinks.AppLinkData;
 
+import java.math.BigDecimal;
+import java.util.Currency;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,9 +32,11 @@ import io.flutter.plugin.common.PluginRegistry;
 /**
  * FacebookAllInOnePlugin
  */
-public class FacebookAllInOnePlugin implements FlutterPlugin, MethodCallHandler, ActivityAware, PluginRegistry.NewIntentListener,EventChannel.StreamHandler {
+public class FacebookAllInOnePlugin implements FlutterPlugin, MethodCallHandler, ActivityAware, PluginRegistry.NewIntentListener, EventChannel.StreamHandler {
     // Channel String;
     private static final String CHANNEL_NAME = "VistaTeam/facebook_all_in_one";
+    private static final String MESSAGES_CHANNEL = "uni_links/messages";
+    private static final String EVENTS_CHANNEL = "uni_links/events";
     /// The MethodChannel that will the communication between Flutter and native Android
     ///
     /// This local reference serves to register the plugin with the Flutter Engine and unregister it
@@ -38,26 +44,13 @@ public class FacebookAllInOnePlugin implements FlutterPlugin, MethodCallHandler,
     private MethodChannel channel;
     private Context mContext;
     private Activity mActivity;
-
     private FacebookAuth facebookAuth = new FacebookAuth();
     private ActivityPluginBinding activityPluginBinding;
-
     private String initialLink;
     private String latestLink;
     private boolean initialIntent = true;
     private BroadcastReceiver changeReceiver;
-
-    private static final String MESSAGES_CHANNEL = "uni_links/messages";
-    private static final String EVENTS_CHANNEL = "uni_links/events";
-
-    @Override
-    public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
-        channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), CHANNEL_NAME);
-        channel.setMethodCallHandler(this);
-        this.mContext = flutterPluginBinding.getApplicationContext();
-        register(flutterPluginBinding.getFlutterEngine().getDartExecutor(), this);
-
-    }
+    private AppEventsLogger appEventsLogger;
 
     private static void register(BinaryMessenger messenger, FacebookAllInOnePlugin plugin) {
         final MethodChannel methodChannel = new MethodChannel(messenger, MESSAGES_CHANNEL);
@@ -65,6 +58,29 @@ public class FacebookAllInOnePlugin implements FlutterPlugin, MethodCallHandler,
 
         final EventChannel eventChannel = new EventChannel(messenger, EVENTS_CHANNEL);
         eventChannel.setStreamHandler(plugin);
+    }
+
+    public static void registerWith(PluginRegistry.Registrar registrar) {
+        // Detect if we've been launched in background
+        if (registrar.activity() == null) {
+            return;
+        }
+
+        final FacebookAllInOnePlugin instance = new FacebookAllInOnePlugin();
+        instance.mContext = registrar.context();
+        register(registrar.messenger(), instance);
+
+        instance.handleIntent(registrar.context(), registrar.activity().getIntent());
+        registrar.addNewIntentListener(instance);
+    }
+
+    @Override
+    public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
+        channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), CHANNEL_NAME);
+        channel.setMethodCallHandler(this);
+        this.mContext = flutterPluginBinding.getApplicationContext();
+        register(flutterPluginBinding.getFlutterEngine().getDartExecutor(), this);
+        appEventsLogger = AppEventsLogger.newLogger(flutterPluginBinding.getApplicationContext());
     }
 
     @Override
@@ -91,6 +107,8 @@ public class FacebookAllInOnePlugin implements FlutterPlugin, MethodCallHandler,
             facebookAuth.logOut(result);
         } else if (call.method.equals("getLaunchingLink")) {
             result.success(initialLink);
+        } else if (call.method.equals("logPurchase")) {
+            logPurchase(call, result);
         } else {
             result.notImplemented();
         }
@@ -153,6 +171,50 @@ public class FacebookAllInOnePlugin implements FlutterPlugin, MethodCallHandler,
         );
     }
 
+    private void logPurchase(MethodCall call, Result result) {
+
+        Double amountD = call.argument("amount");
+        BigDecimal amount = BigDecimal.valueOf(0);
+        if (amountD != null) {
+            amount = BigDecimal.valueOf(amountD);
+        }
+
+        Currency currency = Currency.getInstance((String) call.argument("currency"));
+
+        Map<String, Object> parameters = call.argument("parameters");
+        Bundle parameterBundle = null;
+        if (parameters != null) {
+            parameterBundle = createBundleFromMap(parameters);
+        }
+
+
+        appEventsLogger.logPurchase(amount, currency, parameterBundle);
+
+        result.success(null);
+    }
+
+    private Bundle createBundleFromMap(Map<String, Object> parameters) {
+        Bundle bundle = new Bundle();
+
+        for (String key : parameters.keySet()) {
+            Object value = parameters.get(key);
+            if (value instanceof String) {
+                bundle.putString(key, (String) value);
+            } else if (value instanceof Integer) {
+                bundle.putInt(key, (Integer) value);
+            } else if (value instanceof Long) {
+                bundle.putLong(key, (Long) value);
+            } else if (value instanceof Double) {
+                bundle.putDouble(key, (Double) value);
+            } else if (value instanceof Boolean) {
+                bundle.putBoolean(key, (Boolean) value);
+            } else {
+                throw new IllegalArgumentException("Unsupported value type: " + value);
+            }
+        }
+
+        return bundle;
+    }
 
     private void attachToActivity(ActivityPluginBinding binding) {
         this.activityPluginBinding = binding;
@@ -228,7 +290,6 @@ public class FacebookAllInOnePlugin implements FlutterPlugin, MethodCallHandler,
         };
     }
 
-
     @Override
     public void onListen(Object arguments, EventChannel.EventSink events) {
         changeReceiver = createChangeReceiver(events);
@@ -237,20 +298,6 @@ public class FacebookAllInOnePlugin implements FlutterPlugin, MethodCallHandler,
     @Override
     public void onCancel(Object arguments) {
         changeReceiver = null;
-    }
-
-    public static void registerWith(PluginRegistry.Registrar registrar) {
-        // Detect if we've been launched in background
-        if (registrar.activity() == null) {
-            return;
-        }
-
-        final FacebookAllInOnePlugin instance = new FacebookAllInOnePlugin();
-        instance.mContext = registrar.context();
-        register(registrar.messenger(), instance);
-
-        instance.handleIntent(registrar.context(), registrar.activity().getIntent());
-        registrar.addNewIntentListener(instance);
     }
 
 }
