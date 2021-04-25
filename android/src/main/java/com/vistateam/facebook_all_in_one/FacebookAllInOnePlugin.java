@@ -109,6 +109,8 @@ public class FacebookAllInOnePlugin implements FlutterPlugin, MethodCallHandler,
             result.success(initialLink);
         } else if (call.method.equals("logPurchase")) {
             logPurchase(call, result);
+        } else if (call.method.equals("logEvent")) {
+            handleLogEvent(call, result);
         } else {
             result.notImplemented();
         }
@@ -169,6 +171,26 @@ public class FacebookAllInOnePlugin implements FlutterPlugin, MethodCallHandler,
                     }
                 }
         );
+    }
+
+    private void handleLogEvent(MethodCall call,Result result) {
+        String eventName = call.argument("name");
+        Map<String,Object> parameters = call.argument("parameters");
+        String valueToSum = call.argument("_valueToSum");
+
+        if (valueToSum != null && parameters != null) {
+            Bundle parameterBundle = createBundleFromMap(parameters);
+            double doubleValueToSum = Double.parseDouble(valueToSum);
+            appEventsLogger.logEvent(eventName, doubleValueToSum,parameterBundle);
+        }else if (valueToSum != null) {
+            double doubleValueToSum = Double.parseDouble(valueToSum);
+            appEventsLogger.logEvent(eventName, doubleValueToSum);
+        }else if (parameters != null) {
+            Bundle parameterBundle = createBundleFromMap(parameters);
+            appEventsLogger.logEvent(eventName, parameterBundle);
+        }else {
+            appEventsLogger.logEvent(eventName);
+        }
     }
 
     private void logPurchase(MethodCall call, Result result) {
