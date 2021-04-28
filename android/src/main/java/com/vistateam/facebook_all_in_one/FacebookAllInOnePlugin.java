@@ -182,7 +182,7 @@ public class FacebookAllInOnePlugin implements FlutterPlugin, MethodCallHandler,
             Bundle parameterBundle = createBundleFromMap(parameters);
             double valueToSum = call.argument("_valueToSum");
             appEventsLogger.logEvent(eventName, valueToSum,parameterBundle);
-        }else if (isValueToSumExist != null) {
+        }else if (isValueToSumExist) {
             double valueToSum = call.argument("_valueToSum");
             appEventsLogger.logEvent(eventName, valueToSum);
         }else if (parameters != null) {
