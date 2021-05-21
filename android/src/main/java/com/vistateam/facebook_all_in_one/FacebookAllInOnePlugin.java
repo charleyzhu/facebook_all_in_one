@@ -10,6 +10,7 @@ import android.os.Handler;
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.applinks.AppLinkData;
+import com.google.android.gms.ads.identifier.AdvertisingIdClient;
 
 import java.math.BigDecimal;
 import java.util.Currency;
@@ -68,6 +69,7 @@ public class FacebookAllInOnePlugin implements FlutterPlugin, MethodCallHandler,
 
         final FacebookAllInOnePlugin instance = new FacebookAllInOnePlugin();
         instance.mContext = registrar.context();
+        instance.mActivity = registrar.activity();
         register(registrar.messenger(), instance);
 
         instance.handleIntent(registrar.context(), registrar.activity().getIntent());
@@ -111,6 +113,10 @@ public class FacebookAllInOnePlugin implements FlutterPlugin, MethodCallHandler,
             logPurchase(call, result);
         } else if (call.method.equals("logEvent")) {
             handleLogEvent(call, result);
+        }else if (call.method.equals("getAdvertisingId")) {
+            getAdvertisingId(call, result);
+        }else if (call.method.equals("isLimitAdTrackingEnabled")) {
+            isLimitAdTrackingEnabled(call, result);
         } else {
             result.notImplemented();
         }
@@ -193,6 +199,58 @@ public class FacebookAllInOnePlugin implements FlutterPlugin, MethodCallHandler,
         }
     }
 
+    private void getAdvertisingId(MethodCall call, final Result result) {
+        if (this.mActivity == null) {
+            result.error("400","get Activity Error",null);
+        }else {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        final String id = AdvertisingIdClient.getAdvertisingIdInfo(mActivity).getId();
+                        mActivity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                result.success(id);
+                            }
+                        });
+
+                    }catch (Exception e) {
+                        result.error(e.getClass().getCanonicalName(),e.getLocalizedMessage(),null);
+                    }
+
+
+                }
+            }).start();
+
+        }
+
+    }
+
+    private void isLimitAdTrackingEnabled(MethodCall call, final Result result) {
+        if (this.mActivity == null) {
+            result.error("400","get Activity Error",null);
+        }else {
+
+
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+
+                    try {
+                        boolean isLimitAdTrackingEnabled = AdvertisingIdClient.getAdvertisingIdInfo(mActivity).isLimitAdTrackingEnabled();
+                        result.success(isLimitAdTrackingEnabled);
+                    }catch (Exception e) {
+                        result.error(e.getClass().getCanonicalName(),e.getLocalizedMessage(),null);
+                    }
+
+                }
+            }).start();
+
+
+        }
+    }
+
     private void logPurchase(MethodCall call, Result result) {
 
         Double amountD = call.argument("amount");
@@ -254,6 +312,7 @@ public class FacebookAllInOnePlugin implements FlutterPlugin, MethodCallHandler,
         this.attachToActivity(binding);
         activityPluginBinding.addOnNewIntentListener(this);
         this.handleIntent(this.mContext, activityPluginBinding.getActivity().getIntent());
+        mActivity = binding.getActivity();
     }
 
     @Override

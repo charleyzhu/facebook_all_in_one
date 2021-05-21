@@ -1,6 +1,8 @@
 #import "FacebookAllInOnePlugin.h"
 #import <FBSDKCoreKit/FBSDKCoreKit.h>
 #import <FBSDKLoginKit/FBSDKLoginKit.h>
+#import <AdSupport/AdSupport.h>
+#import <AppTrackingTransparency/AppTrackingTransparency.h>
 
 @interface FacebookAllInOnePlugin()<FlutterStreamHandler>
 @property(nonatomic,copy)FlutterResult pendingResult;
@@ -94,6 +96,12 @@
     }else if ([@"logOut" isEqualToString:call.method]){
         // logOut
         [self logoutWithMethodCall:call result:result];
+    }else if ([@"getAdvertisingId" isEqualToString:call.method]){
+        // getAdvertisingId
+        [self getAdvertisingIdMethodCall:call result:result];
+    }else if ([@"isLimitAdTrackingEnabled" isEqualToString:call.method]){
+        // isLimitAdTrackingEnabled
+        [self getLimitAdTrackingEnabledMethodCall:call result:result];
     } else {
         [self handleFacebookEventMethodCall:call result:result];
         
@@ -266,6 +274,40 @@
     if (!isOk)return;
     [self.loginManager logOut];
     [self finishWithResult:nil];
+}
+
+- (void)getAdvertisingIdMethodCall:(FlutterMethodCall*)call result:(FlutterResult)flutterResult {
+    ASIdentifierManager *manager = [ASIdentifierManager sharedManager];
+    if (@available(iOS 14.0, *)) {
+        bool isRequestAuthorization = call.arguments;
+        if (ATTrackingManager.trackingAuthorizationStatus == ATTrackingManagerAuthorizationStatusAuthorized){
+            flutterResult(manager.advertisingIdentifier.UUIDString);
+        } else if (isRequestAuthorization) {
+            [ATTrackingManager requestTrackingAuthorizationWithCompletionHandler:^(ATTrackingManagerAuthorizationStatus status) {
+                if (status == ATTrackingManagerAuthorizationStatusAuthorized) {
+                    flutterResult(manager.advertisingIdentifier.UUIDString);
+                }else {
+                    flutterResult(@"");
+                }
+            }];
+        }else {
+            flutterResult(@"");
+        };
+    } else {
+        NSString *idfaString = @"";
+        if (manager.isAdvertisingTrackingEnabled) {
+            idfaString = manager.advertisingIdentifier.UUIDString;
+        }
+        flutterResult(idfaString);
+    }
+}
+
+- (void)getLimitAdTrackingEnabledMethodCall:(FlutterMethodCall*)call result:(FlutterResult)flutterResult {
+    if (@available(iOS 14.0, *)) {
+        flutterResult([NSNumber numberWithBool:ATTrackingManager.trackingAuthorizationStatus == ATTrackingManagerAuthorizationStatusAuthorized]);
+    }else {
+        flutterResult([NSNumber numberWithBool:[ASIdentifierManager sharedManager].advertisingTrackingEnabled]);
+    }
 }
 
 
