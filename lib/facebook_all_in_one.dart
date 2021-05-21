@@ -2,7 +2,7 @@
  * @Author: Charley
  * @Date: 2020-10-29 15:16:09
  * @LastEditors: Charley
- * @LastEditTime: 2020-12-08 16:10:53
+ * @LastEditTime: 2021-05-21 16:01:37
  * @FilePath: /facebook_all_in_one/lib/facebook_all_in_one.dart
  * @Description: FacebookAllInOne dart code
  */
@@ -398,5 +398,15 @@ class FacebookAllInOne {
       'parameters': parameters,
     };
     return _channel.invokeMethod<void>('logPurchase', _filterOutNulls(args));
+  }
+
+  /// adid
+  static Future<String> getAdid([bool requestTrackingAuthorization = false]) async {
+    final String id = await _channel.invokeMethod('getAdvertisingId', requestTrackingAuthorization);
+    return id;
+  }
+
+  static Future<bool> get isLimitAdTrackingEnabled async {
+    return await _channel.invokeMethod('isLimitAdTrackingEnabled');
   }
 }
