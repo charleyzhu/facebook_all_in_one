@@ -1,9 +1,9 @@
 class AccessToken {
-  final int expires;
-  final String userId, token;
+  final int? expires;
+  final String? userId, token;
 
-  final List<String> declinedPermissions;
-  final List<String> grantedPermissions;
+  final List<String>? declinedPermissions;
+  final List<String>? grantedPermissions;
 
   AccessToken({
     this.declinedPermissions,
@@ -18,12 +18,8 @@ class AccessToken {
       userId: json['userId'] as String,
       expires: json['expires'] as int,
       token: json['token'] as String,
-      declinedPermissions: json['declinedPermissions'] != null
-          ? List<String>.from(json['declinedPermissions'])
-          : [],
-      grantedPermissions: json['grantedPermissions'] != null
-          ? List<String>.from(json['grantedPermissions'])
-          : [],
+      declinedPermissions: json['declinedPermissions'] != null ? List<String>.from(json['declinedPermissions']) : [],
+      grantedPermissions: json['grantedPermissions'] != null ? List<String>.from(json['grantedPermissions']) : [],
     );
   }
 
