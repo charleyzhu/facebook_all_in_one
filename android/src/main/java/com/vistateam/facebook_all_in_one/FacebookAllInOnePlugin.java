@@ -188,7 +188,7 @@ public class FacebookAllInOnePlugin implements FlutterPlugin, MethodCallHandler,
             Bundle parameterBundle = createBundleFromMap(parameters);
             double valueToSum = call.argument("_valueToSum");
             appEventsLogger.logEvent(eventName, valueToSum,parameterBundle);
-        }else if (isValueToSumExist != null) {
+        }else if (isValueToSumExist) {
             double valueToSum = call.argument("_valueToSum");
             appEventsLogger.logEvent(eventName, valueToSum);
         }else if (parameters != null) {
@@ -215,8 +215,14 @@ public class FacebookAllInOnePlugin implements FlutterPlugin, MethodCallHandler,
                             }
                         });
 
-                    }catch (Exception e) {
-                        result.error(e.getClass().getCanonicalName(),e.getLocalizedMessage(),null);
+                    }catch (final Exception e) {
+                        mActivity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                result.error(e.getClass().getCanonicalName(),e.getLocalizedMessage(),null);
+                            }
+                        });
+
                     }
 
 
@@ -232,18 +238,26 @@ public class FacebookAllInOnePlugin implements FlutterPlugin, MethodCallHandler,
             result.error("400","get Activity Error",null);
         }else {
 
-
             new Thread(new Runnable() {
                 @Override
                 public void run() {
 
                     try {
-                        boolean isLimitAdTrackingEnabled = AdvertisingIdClient.getAdvertisingIdInfo(mActivity).isLimitAdTrackingEnabled();
-                        result.success(isLimitAdTrackingEnabled);
-                    }catch (Exception e) {
-                        result.error(e.getClass().getCanonicalName(),e.getLocalizedMessage(),null);
+                        final boolean isLimitAdTrackingEnabled = AdvertisingIdClient.getAdvertisingIdInfo(mActivity).isLimitAdTrackingEnabled();
+                        mActivity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                result.success(isLimitAdTrackingEnabled);
+                            }
+                        });
+                    }catch (final Exception e) {
+                        mActivity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                result.error(e.getClass().getCanonicalName(),e.getLocalizedMessage(),null);
+                            }
+                        });
                     }
-
                 }
             }).start();
 
