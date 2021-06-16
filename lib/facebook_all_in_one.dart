@@ -91,8 +91,11 @@ class FacebookAllInOne {
   //----------------------------------------------------------------
 
   static Future<String?> getLaunchingLink() async {
-    final launchingLink = await _channel.invokeMethod("getLaunchingLink");
-    return Future.value(launchingLink);
+    dynamic launchingLink = await _channel.invokeMethod("getLaunchingLink");
+    if (launchingLink is Null) {
+      Future.value(null);
+    }
+    return Future.value(launchingLink as String?);
   }
 
   // deep link
