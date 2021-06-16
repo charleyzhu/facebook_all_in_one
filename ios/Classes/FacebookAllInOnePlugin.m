@@ -1,5 +1,6 @@
 #import "FacebookAllInOnePlugin.h"
 #import <FBSDKCoreKit/FBSDKCoreKit.h>
+#import <FBSDKCoreKit_Basics/FBSDKCoreKit_Basics.h>
 #import <FBSDKLoginKit/FBSDKLoginKit.h>
 #import <AdSupport/AdSupport.h>
 #import <AppTrackingTransparency/AppTrackingTransparency.h>
@@ -23,7 +24,7 @@
             [FBSDKSettings setAdvertiserTrackingEnabled:YES];
         } 
         
-        self.loginManager = [[FBSDKLoginManager alloc]init];
+        self.loginManager = [[FBSDKLoginManager alloc] init];
     }
     return self;
 }
@@ -252,12 +253,12 @@
     
     
     FBSDKGraphRequest *graphRequest = [[FBSDKGraphRequest alloc] initWithGraphPath:@"me" parameters:@{@"fields":fields}];
-    [graphRequest startWithCompletionHandler:^(FBSDKGraphRequestConnection * _Nullable connection, id  _Nullable result, NSError * _Nullable error) {
-        if (error != nil) {
-            [self finishWithError:@"error get user data from facebook Graph, please check your fileds and your permissions"];
-        }else {
-            [self finishWithResult:result];
-        }
+    [graphRequest startWithCompletion:^(id<FBSDKGraphRequestConnecting>  _Nullable connection, id  _Nullable result, NSError * _Nullable error) {
+            if (error != nil) {
+                [self finishWithError:@"error get user data from facebook Graph, please check your fileds and your permissions"];
+            }else {
+                [self finishWithResult:result];
+            }
     }];
 }
 
@@ -395,34 +396,34 @@
 -(void)fbEventSetUserDataWithMethodCall:(FlutterMethodCall*)call result:(FlutterResult)flutterResult {
     NSString *email = call.arguments[@"email"];
     if (email != nil)[FBSDKAppEvents setUserData:email forType:FBSDKAppEventEmail];
-    
+
     NSString *firstName = call.arguments[@"firstName"];
     if (firstName != nil)[FBSDKAppEvents setUserData:firstName forType:FBSDKAppEventFirstName];
-    
+
     NSString *lastName = call.arguments[@"lastName"];
     if (lastName != nil)[FBSDKAppEvents setUserData:lastName forType:FBSDKAppEventLastName];
-    
+
     NSString *phone = call.arguments[@"phone"];
     if (phone != nil)[FBSDKAppEvents setUserData:phone forType:FBSDKAppEventPhone];
-    
+
     NSString *dateOfBirth = call.arguments[@"dateOfBirth"];
     if (dateOfBirth != nil)[FBSDKAppEvents setUserData:dateOfBirth forType:FBSDKAppEventDateOfBirth];
-    
+
     NSString *gender = call.arguments[@"gender"];
     if (gender != nil)[FBSDKAppEvents setUserData:gender forType:FBSDKAppEventGender];
-    
+
     NSString *city = call.arguments[@"city"];
     if (city != nil)[FBSDKAppEvents setUserData:city forType:FBSDKAppEventCity];
-    
+
     NSString *state = call.arguments[@"state"];
     if (state != nil)[FBSDKAppEvents setUserData:state forType:FBSDKAppEventState];
-    
+
     NSString *zip = call.arguments[@"zip"];
     if (zip != nil)[FBSDKAppEvents setUserData:zip forType:FBSDKAppEventZip];
-    
+
     NSString *country = call.arguments[@"country"];
     if (country != nil)[FBSDKAppEvents setUserData:country forType:FBSDKAppEventCountry];
-    
+
     flutterResult(nil);
 }
 

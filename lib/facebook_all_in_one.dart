@@ -90,7 +90,7 @@ class FacebookAllInOne {
   //get Launching Data
   //----------------------------------------------------------------
 
-  static Future<String> getLaunchingLink() async {
+  static Future<String?> getLaunchingLink() async {
     final launchingLink = await _channel.invokeMethod("getLaunchingLink");
     return Future.value(launchingLink);
   }
