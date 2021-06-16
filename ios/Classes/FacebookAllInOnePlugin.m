@@ -1,5 +1,4 @@
 #import "FacebookAllInOnePlugin.h"
-#import <FBSDKCoreKit/FBSDKCoreKit.h>
 #import <FBSDKCoreKit_Basics/FBSDKCoreKit_Basics.h>
 #import <FBSDKLoginKit/FBSDKLoginKit.h>
 #import <AdSupport/AdSupport.h>
