@@ -19,7 +19,6 @@
 {
     self = [super init];
     if (self) {
-        [FBSDKApplicationDelegate initializeSDK:nil];
         if (@available(iOS 14.0, *)) {
             [FBSDKSettings setAdvertiserTrackingEnabled:YES];
         } 
@@ -133,9 +132,6 @@
     } else if ([@"setUserID" isEqualToString:call.method]){
         // setUserID
         [self fbEventSetUserIDWithMethodCall:call result:result];
-    } else if ([@"updateUserProperties" isEqualToString:call.method]){
-        // updateUserProperties
-        [self fbEventUpdateUserPropertiesWithMethodCall:call result:result];
     } else if ([@"setAutoLogAppEventsEnabled" isEqualToString:call.method]){
         // setAutoLogAppEventsEnabled
         [self fbEventSetAutoLogAppEventsEnabledWithMethodCall:call result:result];
@@ -434,20 +430,6 @@
 -(void)fbEventSetUserIDWithMethodCall:(FlutterMethodCall*)call result:(FlutterResult)flutterResult {
     FBSDKAppEvents.userID = call.arguments;
     flutterResult(nil);
-}
-
-// UpdateUserProperties
--(void)fbEventUpdateUserPropertiesWithMethodCall:(FlutterMethodCall*)call result:(FlutterResult)flutterResult {
-    NSDictionary *parameters = call.arguments[@"parameters"];
-    
-    [FBSDKAppEvents updateUserProperties:parameters handler:^(FBSDKGraphRequestConnection * _Nullable connection, id  _Nullable result, NSError * _Nullable error) {
-            if (error != nil) {
-                flutterResult(nil);
-            }else {
-                flutterResult(result);
-            }
-    }];
-    
 }
 
 // SetAutoLogAppEventsEnabled
