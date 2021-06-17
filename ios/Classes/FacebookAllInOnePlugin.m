@@ -434,7 +434,7 @@
 
 // SetAutoLogAppEventsEnabled
 -(void)fbEventSetAutoLogAppEventsEnabledWithMethodCall:(FlutterMethodCall*)call result:(FlutterResult)flutterResult {
-    bool enabled = call.arguments;
+    bool enabled = call.arguments[@"enabled"];
     [FBSDKSettings setAutoLogAppEventsEnabled:enabled];
     flutterResult(nil);
 }

@@ -359,7 +359,10 @@ class FacebookAllInOne {
   ///
   /// See: https://developers.facebook.com/docs/app-events/gdpr-compliance
   static Future<void> setAutoLogAppEventsEnabled(bool enabled) {
-    return _channel.invokeMethod<void>('setAutoLogAppEventsEnabled', enabled);
+    final args = <String, dynamic>{
+      "enabled": enabled,
+    };
+    return _channel.invokeMethod<void>('setAutoLogAppEventsEnabled', args);
   }
 
   /// Set Data Processing Options
