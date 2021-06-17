@@ -201,11 +201,13 @@ public class FacebookAllInOnePlugin implements FlutterPlugin, MethodCallHandler,
         }else {
             appEventsLogger.logEvent(eventName);
         }
+        result.success(null);
     }
 
     private void setAutoLogAppEventsEnabledHandel(MethodCall call,Result result) {
         boolean isEnabled = call.argument("enabled");
         setAutoLogAppEventsEnabled(isEnabled);
+        result.success(null);
     }
 
     private void getAdvertisingId(MethodCall call, final Result result) {
