@@ -30,6 +30,8 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.PluginRegistry;
 
+import static com.facebook.FacebookSdk.setAutoLogAppEventsEnabled;
+
 /**
  * FacebookAllInOnePlugin
  */
@@ -113,9 +115,11 @@ public class FacebookAllInOnePlugin implements FlutterPlugin, MethodCallHandler,
             logPurchase(call, result);
         } else if (call.method.equals("logEvent")) {
             handleLogEvent(call, result);
-        }else if (call.method.equals("getAdvertisingId")) {
+        } else if (call.method.equals("setAutoLogAppEventsEnabled")) {
+            setAutoLogAppEventsEnabledHandel(call, result);
+        } else if (call.method.equals("getAdvertisingId")) {
             getAdvertisingId(call, result);
-        }else if (call.method.equals("isLimitAdTrackingEnabled")) {
+        } else if (call.method.equals("isLimitAdTrackingEnabled")) {
             isLimitAdTrackingEnabled(call, result);
         } else {
             result.notImplemented();
@@ -197,6 +201,11 @@ public class FacebookAllInOnePlugin implements FlutterPlugin, MethodCallHandler,
         }else {
             appEventsLogger.logEvent(eventName);
         }
+    }
+
+    private void setAutoLogAppEventsEnabledHandel(MethodCall call,Result result) {
+        boolean isEnabled = call.argument("enabled");
+        setAutoLogAppEventsEnabled(isEnabled);
     }
 
     private void getAdvertisingId(MethodCall call, final Result result) {
