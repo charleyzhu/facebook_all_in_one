@@ -4,7 +4,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'facebook_all_in_one'
-  s.version          = '0.0.1'
+  s.version          = '0.0.2'
   s.summary          = 'FaceBook Plugin All in One'
   s.description      = <<-DESC
   aceBook Plugin All in One.
@@ -17,8 +17,8 @@ Pod::Spec.new do |s|
   s.public_header_files = 'Classes/**/*.h'
   s.dependency 'Flutter'
 
-  s.dependency 'FBSDKCoreKit', '~> 9.0.1'
-  s.dependency 'FBSDKLoginKit','~> 9.0.1'
+  s.dependency 'FBSDKCoreKit', '~> 11.0.0'
+  s.dependency 'FBSDKLoginKit','~> 11.0.0'
 
   s.platform = :ios, '9.0'
 

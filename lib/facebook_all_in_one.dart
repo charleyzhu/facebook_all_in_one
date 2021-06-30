@@ -58,19 +58,24 @@ enum FacebookLoginBehavior {
 class FacebookAllInOne {
   static const MethodChannel _channel = const MethodChannel('VistaTeam/facebook_all_in_one');
   static const EventChannel _eChannel = const EventChannel('VistaTeam/facebook_all_in_one_events');
-  Stream<String> _stream;
+  Stream<String>? _stream;
 
   static Future<String> get platformVersion async {
     final String version = await _channel.invokeMethod('getPlatformVersion');
     return version;
   }
 
-  Stream<String> getLinksStream() => _stream ??= _eChannel.receiveBroadcastStream().cast<String>();
+  Stream<String> getLinksStream() {
+    if (_stream == null) {
+      _stream = _eChannel.receiveBroadcastStream().cast<String>();
+    }
+    return _stream!;
+  }
 
   Stream<Uri> getUriLinksStream() {
     return getLinksStream().transform<Uri>(
       StreamTransformer<String, Uri>.fromHandlers(
-        handleData: (String link, EventSink<Uri> sink) {
+        handleData: (String? link, EventSink<Uri?> sink) {
           if (link == null) {
             sink.add(null);
           } else {
@@ -85,9 +90,12 @@ class FacebookAllInOne {
   //get Launching Data
   //----------------------------------------------------------------
 
-  static Future<String> getLaunchingLink() async {
-    final launchingLink = await _channel.invokeMethod("getLaunchingLink");
-    return Future.value(launchingLink);
+  static Future<String?> getLaunchingLink() async {
+    dynamic launchingLink = await _channel.invokeMethod("getLaunchingLink");
+    if (launchingLink is Null) {
+      Future.value(null);
+    }
+    return Future.value(launchingLink as String?);
   }
 
   // deep link
@@ -133,7 +141,7 @@ class FacebookAllInOne {
   }
 
   /// if the user is logged return one instance of AccessToken
-  Future<AccessToken> get isLogged async {
+  Future<AccessToken?> get isLogged async {
     try {
       final result = await _channel.invokeMethod("isLogged");
       if (result != null) {
@@ -148,8 +156,6 @@ class FacebookAllInOne {
   }
 
   static String _currentLoginBehaviorAsString(FacebookLoginBehavior loginBehavior) {
-    assert(loginBehavior != null, 'The login behavior was unexpectedly null.');
-
     switch (loginBehavior) {
       case FacebookLoginBehavior.nativeWithFallback:
         return 'nativeWithFallback';
@@ -207,15 +213,15 @@ class FacebookAllInOne {
   }
 
   /// Returns the app ID this logger was configured to log to.
-  static Future<String> getApplicationId() {
+  static Future<String?> getApplicationId() {
     return _channel.invokeMethod<String>('getApplicationId');
   }
 
   /// Log an app event with the specified [name] and the supplied [parameters] value.
   static Future<void> logEvent({
-    @required String name,
-    Map<String, dynamic> parameters,
-    double valueToSum,
+    required String name,
+    Map<String, dynamic>? parameters,
+    double? valueToSum,
   }) {
     final args = <String, dynamic>{
       'name': name,
@@ -231,16 +237,16 @@ class FacebookAllInOne {
   /// instance of an application. The user data will be persisted between
   /// application instances.
   static Future<void> setUserData({
-    String email,
-    String firstName,
-    String lastName,
-    String phone,
-    String dateOfBirth,
-    String gender,
-    String city,
-    String state,
-    String zip,
-    String country,
+    String? email,
+    String? firstName,
+    String? lastName,
+    String? phone,
+    String? dateOfBirth,
+    String? gender,
+    String? city,
+    String? state,
+    String? zip,
+    String? country,
   }) {
     final args = <String, dynamic>{
       'email': email,
@@ -260,8 +266,8 @@ class FacebookAllInOne {
 
   /// Logs an app event that tracks that the application was open via Push Notification.
   static Future<void> logPushNotificationOpen({
-    @required Map<String, dynamic> payload,
-    String action,
+    required Map<String, dynamic> payload,
+    String? action,
   }) {
     final args = <String, dynamic>{
       'payload': payload,
@@ -277,19 +283,6 @@ class FacebookAllInOne {
   /// The user ID will be persisted between application instances.
   static Future<void> setUserID(String id) {
     return _channel.invokeMethod<void>('setUserID', id);
-  }
-
-  /// Update user properties as provided by a map of [parameters]
-  static Future<void> updateUserProperties({
-    @required Map<String, dynamic> parameters,
-    String applicationId,
-  }) {
-    final args = <String, dynamic>{
-      'parameters': parameters,
-      'applicationId': applicationId,
-    };
-
-    return _channel.invokeMethod<void>('updateUserProperties', args);
   }
 
   // Below are shorthand implementations of the predefined app event constants
@@ -312,7 +305,7 @@ class FacebookAllInOne {
   /// Parameter [registrationMethod] is used to specify the method the user has
   /// used to register for the app, e.g. "Facebook", "email", "Google", etc.
   /// See: https://developers.facebook.com/docs/reference/androidsdk/current/facebook/com/facebook/appevents/appeventsconstants.html/#eventnamecompletedregistration
-  static Future<void> logCompletedRegistration({String registrationMethod}) {
+  static Future<void> logCompletedRegistration({String? registrationMethod}) {
     return logEvent(
       name: eventNameCompletedRegistration,
       parameters: {
@@ -324,7 +317,7 @@ class FacebookAllInOne {
   /// Log this event when the user has rated an item in the app.
   ///
   /// See: https://developers.facebook.com/docs/reference/androidsdk/current/facebook/com/facebook/appevents/appeventsconstants.html/#eventnamerated
-  static Future<void> logRated({double valueToSum}) {
+  static Future<void> logRated({double? valueToSum}) {
     return logEvent(
       name: eventNameRated,
       valueToSum: valueToSum,
@@ -335,9 +328,9 @@ class FacebookAllInOne {
   ///
   /// See: https://developers.facebook.com/docs/reference/androidsdk/current/facebook/com/facebook/appevents/appeventsconstants.html/#eventnameviewedcontent
   static Future<void> logViewContent({
-    Map<String, dynamic> content,
-    String id,
-    String type,
+    Map<String, dynamic>? content,
+    String? id,
+    String? type,
   }) {
     return logEvent(
       name: eventNameViewedContent,
@@ -366,7 +359,10 @@ class FacebookAllInOne {
   ///
   /// See: https://developers.facebook.com/docs/app-events/gdpr-compliance
   static Future<void> setAutoLogAppEventsEnabled(bool enabled) {
-    return _channel.invokeMethod<void>('setAutoLogAppEventsEnabled', enabled);
+    final args = <String, dynamic>{
+      "enabled": enabled,
+    };
+    return _channel.invokeMethod<void>('setAutoLogAppEventsEnabled', args);
   }
 
   /// Set Data Processing Options
@@ -375,8 +371,8 @@ class FacebookAllInOne {
   /// See: https://developers.facebook.com/docs/marketing-apis/data-processing-options
   static Future<void> setDataProcessingOptions(
     List<String> options, {
-    int country,
-    int state,
+    int? country,
+    int? state,
   }) {
     final args = <String, dynamic>{
       'options': options,
@@ -388,9 +384,9 @@ class FacebookAllInOne {
   }
 
   static Future<void> logPurchase({
-    @required double amount,
-    @required String currency,
-    Map<String, dynamic> parameters,
+    required double amount,
+    required String currency,
+    Map<String, dynamic>? parameters,
   }) {
     final args = <String, dynamic>{
       'amount': amount,
